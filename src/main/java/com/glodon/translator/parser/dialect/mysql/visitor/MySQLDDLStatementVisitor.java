@@ -39,8 +39,13 @@ import com.glodon.translator.parser.segment.generic.DataTypeSegment;
 import com.glodon.translator.parser.segment.generic.OwnerSegment;
 import com.glodon.translator.parser.segment.generic.table.SimpleTableSegment;
 import com.glodon.translator.parser.statement.SQLStatement;
+import com.glodon.translator.parser.value.ValueASTNode;
 import com.glodon.translator.parser.value.collection.CollectionValue;
 import com.glodon.translator.parser.value.identifier.IdentifierValue;
+import com.glodon.translator.parser.value.literal.LiteralValue;
+import com.glodon.translator.parser.value.literal.NowLiteralValue;
+import com.glodon.translator.parser.value.literal.OtherLiteralValue;
+import com.glodon.translator.parser.value.literal.StringLiteralValue;
 import com.glodon.translator.parser.visitor.statement.type.DDLStatementVisitor;
 import com.google.common.base.Preconditions;
 
@@ -48,6 +53,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class MySQLDDLStatementVisitor extends MySQLStatementVisitor implements DDLStatementVisitor {
 
@@ -392,8 +398,29 @@ public final class MySQLDDLStatementVisitor extends MySQLStatementVisitor implem
         ColumnSegment column = new ColumnSegment(ctx.column_name.start.getStartIndex(), ctx.column_name.stop.getStopIndex(), (IdentifierValue) visit(ctx.column_name));
         DataTypeSegment dataTypeSegment = (DataTypeSegment) visit(ctx.fieldDefinition().dataType());
         boolean isPrimaryKey = ctx.fieldDefinition().columnAttribute().stream().anyMatch(each -> null != each.KEY() && null == each.UNIQUE());
-        // TODO parse not null
-        ColumnDefinitionSegment result = new ColumnDefinitionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), column, dataTypeSegment, isPrimaryKey, false);
+        boolean notNull = ctx.fieldDefinition().columnAttribute().stream().anyMatch(each -> null != each.NOT() && null != each.NULL());
+        ColumnAttributeContext defaultContext = ctx.fieldDefinition().columnAttribute().stream().filter(each -> null != each.DEFAULT()).findFirst().orElse(null);
+        ColumnAttributeContext onUpdateContext = ctx.fieldDefinition().columnAttribute().stream().filter(each -> null != each.ON() && null != each.UPDATE()).findFirst().orElse(null);
+        ColumnAttributeContext commentContext = ctx.fieldDefinition().columnAttribute().stream().filter(each -> null != each.COMMENT()).findFirst().orElse(null);
+        LiteralValue defaultValue = null;
+        if (null != defaultContext) {
+            if (null != defaultContext.literals() || null != defaultContext.now()) {
+                defaultValue = (LiteralValue) visit(defaultContext);
+            } else {
+                if (null != defaultContext.expr() && null != defaultContext.LP_() && null != defaultContext.RP_()) {
+                    defaultValue = new OtherLiteralValue(defaultContext.LP_().getText() + defaultContext.expr().getText() + defaultContext.RP_().getText());
+                }
+            }
+        }
+        NowLiteralValue onUpdateNow = null;
+        if (null != onUpdateContext) {
+            onUpdateNow = (NowLiteralValue) visit(onUpdateContext);
+        }
+        StringLiteralValue commentValue = null;
+        if (null != commentContext) {
+            commentValue = (StringLiteralValue) visit(commentContext.string_());
+        }
+        ColumnDefinitionSegment result = new ColumnDefinitionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), column, dataTypeSegment, isPrimaryKey, notNull, defaultValue, onUpdateNow, commentValue);
         result.getReferencedTables().addAll(getReferencedTables(ctx));
         return result;
     }

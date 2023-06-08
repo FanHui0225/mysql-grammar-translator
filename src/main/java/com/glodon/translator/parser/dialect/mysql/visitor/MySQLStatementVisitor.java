@@ -47,6 +47,7 @@ import com.glodon.translator.parser.segment.generic.table.*;
 import com.glodon.translator.parser.util.SQLUtils;
 import com.glodon.translator.parser.value.collection.CollectionValue;
 import com.glodon.translator.parser.value.identifier.IdentifierValue;
+import com.glodon.translator.parser.value.keyword.KeywordValue;
 import com.glodon.translator.parser.value.literal.*;
 import com.glodon.translator.parser.value.parametermarker.ParameterMarkerValue;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -98,6 +99,29 @@ public abstract class MySQLStatementVisitor extends MySQLStatementBaseVisitor<AS
             return visit(ctx.nullValueLiterals());
         }
         throw new IllegalStateException("Literals must have string, number, dateTime, hex, bit, boolean or null.");
+    }
+
+    @Override
+    public ASTNode visitNow(NowContext ctx) {
+        StringBuilder now_func = new StringBuilder();
+        if (null != ctx.CURRENT_TIMESTAMP()) {
+            now_func.append(ctx.CURRENT_TIMESTAMP().getText());
+        } else if (null != ctx.LOCALTIME()) {
+            now_func.append(ctx.LOCALTIME().getText());
+
+        } else if (null != ctx.LOCALTIMESTAMP()) {
+            now_func.append(ctx.LOCALTIMESTAMP().getText());
+        }
+        if (now_func.length() > 0) {
+            if (null != ctx.LP_() && null != ctx.NUMBER_() && null != ctx.RP_()) {
+                now_func.append(ctx.LP_().getText());
+                now_func.append(ctx.NUMBER_().getText());
+                now_func.append(ctx.RP_().getText());
+            }
+            return new NowLiteralValue(now_func.toString());
+        } else {
+            return super.visitNow(ctx);
+        }
     }
 
     @Override
@@ -992,6 +1016,10 @@ public abstract class MySQLStatementVisitor extends MySQLStatementBaseVisitor<AS
         }
         if (null != ctx.precision()) {
             DataTypeLengthSegment dataTypeLengthSegment = (DataTypeLengthSegment) visit(ctx.precision());
+            result.setDataLength(dataTypeLengthSegment);
+        }
+        if (null != ctx.typeDatetimePrecision()) {
+            DataTypeLengthSegment dataTypeLengthSegment = (DataTypeLengthSegment) visit(ctx.typeDatetimePrecision());
             result.setDataLength(dataTypeLengthSegment);
         }
         return result;
