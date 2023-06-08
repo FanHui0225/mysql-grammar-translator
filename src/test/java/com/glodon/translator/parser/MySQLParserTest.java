@@ -21,7 +21,7 @@ public class MySQLParserTest {
                 "FROM user , ( SELECT @age := 0  ) s\n" +
                 "ORDER BY id", false);
         SQLStatement statement3 = executor.parse("CREATE TABLE `deploy_engine_meta` (\n" +
-                "\t`id` varchar(100) NOT NULL comment '引擎id',\n" +
+                "\t`id` varchar(100) NOT NULL comment '引擎id' ,\n" +
                 "\t`engine_name` varchar(100) NOT NULL,\n" +
                 "\t`env_name` varchar(100) NOT NULL,\n" +
                 "\t`engine_status` INT NOT NULL,\n" +
