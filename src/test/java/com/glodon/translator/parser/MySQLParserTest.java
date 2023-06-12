@@ -22,7 +22,7 @@ public class MySQLParserTest {
                     "(@age:=@age + age ) as  age_sum\n" +
                     "FROM user , ( SELECT @age := 0  ) s\n" +
                     "ORDER BY id", false);
-            SQLStatement statement3 = executor.parse("CREATE TABLE `deploy_engine_meta` (\n" +
+            SQLStatement statement3 = executor.parse("CREATE TEMPORARY TABLE `aa`.`deploy_engine_meta` (\n" +
                     "\t`id` varchar(100) NOT NULL comment '引擎id' ,\n" +
                     "\t`engine_name` varchar(100) NOT NULL,\n" +
                     "\t`env_name` varchar(100) NOT NULL,\n" +

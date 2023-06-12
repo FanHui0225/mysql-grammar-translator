@@ -3,6 +3,7 @@ package com.glodon.translator.parser.segment.generic.table;
 import com.glodon.translator.parser.segment.generic.AliasSegment;
 import com.glodon.translator.parser.segment.generic.OwnerAvailable;
 import com.glodon.translator.parser.segment.generic.OwnerSegment;
+import com.glodon.translator.parser.value.identifier.IdentifierValue;
 
 import java.util.Optional;
 
@@ -60,5 +61,9 @@ public final class SimpleTableSegment implements TableSegment, OwnerAvailable {
     @Override
     public Optional<AliasSegment> getAlias() {
         return Optional.ofNullable(alias);
+    }
+
+    public IdentifierValue getTableName() {
+        return tableName != null ? tableName.getIdentifier() : null;
     }
 }
