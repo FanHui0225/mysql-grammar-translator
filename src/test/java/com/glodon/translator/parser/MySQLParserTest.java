@@ -24,11 +24,11 @@ public class MySQLParserTest {
                     "FROM user , ( SELECT @age := 0  ) s\n" +
                     "ORDER BY id", false);
             SQLStatement statement3 = executor.parse(
-                    "CREATE TEMPORARY TABLE `abc`.`deploy_engine_meta` (\n" +
-                            "\t`id` varchar(100) NOT NULL PRIMARY KEY comment '引擎id' ,\n" +
+                    "CREATE TEMPORARY TABLE `ABC`.`deploy_engine_meta` (\n" +
+                            "\t`id` bigint(100) NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT '引擎id' ,\n" +
+                            "\t`engine_status` INT NOT NULL,\n" +
                             "\t`engine_name` varchar(100) NOT NULL,\n" +
                             "\t`env_name` varchar(100) NOT NULL,\n" +
-                            "\t`engine_status` INT NOT NULL AUTO_INCREMENT,\n" +
                             "\t`engine_sign` varchar(255) NOT NULL,\n" +
                             "\t`pivot_meta_id` varchar(100) NOT NULL,\n" +
                             "\t`version` bigint(20) NOT NULL DEFAULT 0,\n" +
@@ -55,7 +55,6 @@ public class MySQLParserTest {
             extractor.extractTablesFromSelect((SelectStatement) statement2);
             System.out.println("开销" + (System.currentTimeMillis() - start) + "ms");
             System.out.println(new MySQLToDamengStatementTranslator().translate(statement3));
-            Thread.sleep(1000);
         }
     }
 }

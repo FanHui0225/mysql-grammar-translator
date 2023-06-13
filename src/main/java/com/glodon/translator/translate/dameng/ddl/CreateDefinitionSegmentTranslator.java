@@ -10,8 +10,8 @@ import com.glodon.translator.translate.SQLTranslatorException;
 
 public class CreateDefinitionSegmentTranslator extends SQLSegmentTranslator<CreateDefinitionSegment> {
 
-    private boolean fillEndSymbol;
     private boolean autoInc;
+    private boolean fillEndSymbol;
 
     public CreateDefinitionSegmentTranslator() {
         this(true);
@@ -45,24 +45,25 @@ public class CreateDefinitionSegmentTranslator extends SQLSegmentTranslator<Crea
             }
             if (columnDefinitionSegment.isPrimaryKey()) {
                 appendBlankSpace().append("PRIMARY").appendBlankSpace().append("KEY");
-            }
-            if (columnDefinitionSegment.isAutoInc()) {
-                String dataType = dataTypeSegmentTranslator.getDataType();
-                switch (dataType) {
-                    case "TINYINT":
-                    case "SMALLINT":
-                    case "INT":
-                    case "BIGINT":
-                        appendBlankSpace().append("AUTO_INCREMENT");
-                        this.autoInc = true;
-                        break;
-                    default:
-                        this.autoInc = false;
-                        break;
+                if (columnDefinitionSegment.isAutoInc()) {
+                    String dataType = dataTypeSegmentTranslator.getDataType();
+                    switch (dataType) {
+                        case "TINYINT":
+                        case "SMALLINT":
+                        case "INT":
+                        case "BIGINT":
+                            appendBlankSpace().append("AUTO_INCREMENT");
+                            this.autoInc = true;
+                            break;
+                        default:
+                            this.autoInc = false;
+                            break;
+                    }
                 }
             }
+
             if (columnDefinitionSegment.getCommentValue() != null) {
-                appendBlankSpace().append("COMMENT").appendBlankSpace().append(columnDefinitionSegment.getCommentValue().getValue());
+                appendBlankSpace().append("COMMENT").appendBlankSpace().appendSingleQuote().append(columnDefinitionSegment.getCommentValue().getValue()).appendSingleQuote();
             }
             if (isFillEndSymbol()) {
                 append(',');

@@ -38,6 +38,20 @@ public abstract class SQLTranslator<E extends ASTNode> {
         return this;
     }
 
+    public SQLTranslator<E> appendBackQuote() {
+        append('`');
+        return this;
+    }
+
+    public SQLTranslator<E> appendSingleQuote() {
+        append('\'');
+        return this;
+    }
+
+    public SQLTranslator<E> appendQuote() {
+        append('\"');
+        return this;
+    }
 
     @Override
     public String toString() {

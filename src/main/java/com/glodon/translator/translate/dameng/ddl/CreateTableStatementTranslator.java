@@ -41,9 +41,9 @@ public class CreateTableStatementTranslator extends SQLStatementTranslator<MySQL
             hasAutoInc |= createDefinitionSegmentTranslator.isAutoInc();
 
         }
-        append(")").appendLineFeed();
+        append(")");
         if (hasAutoInc) {
-            append("AUTO_INCREMENT").append('=').append('0');
+            appendLineFeed().append("AUTO_INCREMENT").append('=').append('0');
         }
         append(';');
         return toString();
