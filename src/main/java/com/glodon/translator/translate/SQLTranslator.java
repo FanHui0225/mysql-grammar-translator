@@ -13,6 +13,11 @@ public abstract class SQLTranslator<E extends ASTNode> {
         return this;
     }
 
+    public SQLTranslator<E> append(int num) {
+        SQL.append(num);
+        return this;
+    }
+
     public SQLTranslator<E> append(String phrase) {
         SQL.append(phrase);
         return this;

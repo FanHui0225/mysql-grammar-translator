@@ -8,6 +8,7 @@ import com.glodon.translator.translate.SQLStatementTranslator;
 import com.glodon.translator.translate.SQLTranslatorException;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 public class CreateTableStatementTranslator extends SQLStatementTranslator<MySQLCreateTableStatement> {
 
@@ -25,14 +26,26 @@ public class CreateTableStatementTranslator extends SQLStatementTranslator<MySQL
         if (tableSegment.getOwner().isPresent()) {
             append(tableSegment.getOwner().get().getIdentifier().getValue()).append('.');
         }
-        append(tableName.getValue());
-        appendLineFeed().append('(');
+        append(tableName.getValue()).appendBlankSpace().append('(').appendLineFeed();
+
         Collection<ColumnDefinitionSegment> columnDefinitionSegments = statement.getColumnDefinitions();
         if (columnDefinitionSegments.isEmpty()) {
             throw new SQLTranslatorException("column definition required.");
         }
-        columnDefinitionSegments.forEach(segment -> append(new CreateDefinitionSegmentTranslator().translate(segment)));
+        Iterator<ColumnDefinitionSegment> it = columnDefinitionSegments.iterator();
+        boolean hasAutoInc = false;
+        while (it.hasNext()) {
+            ColumnDefinitionSegment definitionSegment = it.next();
+            CreateDefinitionSegmentTranslator createDefinitionSegmentTranslator = new CreateDefinitionSegmentTranslator(it.hasNext());
+            append(createDefinitionSegmentTranslator.translate(definitionSegment)).appendLineFeed();
+            hasAutoInc |= createDefinitionSegmentTranslator.isAutoInc();
+
+        }
         append(")").appendLineFeed();
+        if (hasAutoInc) {
+            append("AUTO_INCREMENT").append('=').append('0');
+        }
+        append(';');
         return toString();
     }
 }

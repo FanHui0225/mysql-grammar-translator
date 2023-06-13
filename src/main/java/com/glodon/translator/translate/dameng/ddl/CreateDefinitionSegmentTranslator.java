@@ -10,8 +10,15 @@ import com.glodon.translator.translate.SQLTranslatorException;
 
 public class CreateDefinitionSegmentTranslator extends SQLSegmentTranslator<CreateDefinitionSegment> {
 
+    private boolean fillEndSymbol;
+    private boolean autoInc;
+
     public CreateDefinitionSegmentTranslator() {
-        appendIndent();
+        this(true);
+    }
+
+    public CreateDefinitionSegmentTranslator(boolean fillEndSymbol) {
+        this.fillEndSymbol = fillEndSymbol;
     }
 
     @Override
@@ -22,13 +29,44 @@ public class CreateDefinitionSegmentTranslator extends SQLSegmentTranslator<Crea
             if (null == columnSegment) {
                 throw new SQLTranslatorException("create column name definition required.");
             }
-            append(columnSegment.getIdentifier().getValue());
-            appendIndent();
+            appendIndent().append(columnSegment.getIdentifier().getValue()).appendBlankSpace();
             DataTypeSegment typeSegment = columnDefinitionSegment.getDataType();
             if (null == typeSegment) {
                 throw new SQLTranslatorException("create column type definition required.");
             }
-            append(new DataTypeSegmentTranslator().translate(typeSegment));
+            DataTypeSegmentTranslator dataTypeSegmentTranslator = new DataTypeSegmentTranslator();
+            append(dataTypeSegmentTranslator.translate(typeSegment));
+
+            if (columnDefinitionSegment.isNotNull()) {
+                appendBlankSpace().append("NOT").appendBlankSpace().append("NULL");
+            }
+            if (columnDefinitionSegment.getDefaultValue() != null) {
+                appendBlankSpace().append("DEFAULT").appendBlankSpace().append(String.valueOf(columnDefinitionSegment.getDefaultValue().getValue()));
+            }
+            if (columnDefinitionSegment.isPrimaryKey()) {
+                appendBlankSpace().append("PRIMARY").appendBlankSpace().append("KEY");
+            }
+            if (columnDefinitionSegment.isAutoInc()) {
+                String dataType = dataTypeSegmentTranslator.getDataType();
+                switch (dataType) {
+                    case "TINYINT":
+                    case "SMALLINT":
+                    case "INT":
+                    case "BIGINT":
+                        appendBlankSpace().append("AUTO_INCREMENT");
+                        this.autoInc = true;
+                        break;
+                    default:
+                        this.autoInc = false;
+                        break;
+                }
+            }
+            if (columnDefinitionSegment.getCommentValue() != null) {
+                appendBlankSpace().append("COMMENT").appendBlankSpace().append(columnDefinitionSegment.getCommentValue().getValue());
+            }
+            if (isFillEndSymbol()) {
+                append(',');
+            }
         } else if (statement instanceof ConstraintDefinitionSegment) {
 
         } else {
@@ -37,4 +75,11 @@ public class CreateDefinitionSegmentTranslator extends SQLSegmentTranslator<Crea
         return toString();
     }
 
+    public boolean isFillEndSymbol() {
+        return fillEndSymbol;
+    }
+
+    public boolean isAutoInc() {
+        return autoInc;
+    }
 }

@@ -398,7 +398,8 @@ public final class MySQLDDLStatementVisitor extends MySQLStatementVisitor implem
         ColumnSegment column = new ColumnSegment(ctx.column_name.start.getStartIndex(), ctx.column_name.stop.getStopIndex(), (IdentifierValue) visit(ctx.column_name));
         DataTypeSegment dataTypeSegment = (DataTypeSegment) visit(ctx.fieldDefinition().dataType());
         boolean isPrimaryKey = ctx.fieldDefinition().columnAttribute().stream().anyMatch(each -> null != each.KEY() && null == each.UNIQUE());
-        boolean notNull = ctx.fieldDefinition().columnAttribute().stream().anyMatch(each -> null != each.NOT() && null != each.NULL());
+        boolean isNotNull = ctx.fieldDefinition().columnAttribute().stream().anyMatch(each -> null != each.NOT() && null != each.NULL());
+        boolean isAutoInc = ctx.fieldDefinition().columnAttribute().stream().anyMatch(each -> null != each.AUTO_INCREMENT());
         ColumnAttributeContext defaultContext = ctx.fieldDefinition().columnAttribute().stream().filter(each -> null != each.DEFAULT()).findFirst().orElse(null);
         ColumnAttributeContext onUpdateContext = ctx.fieldDefinition().columnAttribute().stream().filter(each -> null != each.ON() && null != each.UPDATE()).findFirst().orElse(null);
         ColumnAttributeContext commentContext = ctx.fieldDefinition().columnAttribute().stream().filter(each -> null != each.COMMENT()).findFirst().orElse(null);
@@ -420,7 +421,18 @@ public final class MySQLDDLStatementVisitor extends MySQLStatementVisitor implem
         if (null != commentContext) {
             commentValue = (StringLiteralValue) visit(commentContext.string_());
         }
-        ColumnDefinitionSegment result = new ColumnDefinitionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), column, dataTypeSegment, isPrimaryKey, notNull, defaultValue, onUpdateNow, commentValue);
+        ColumnDefinitionSegment result = new ColumnDefinitionSegment(
+                ctx.getStart().getStartIndex(),
+                ctx.getStop().getStopIndex(),
+                column,
+                dataTypeSegment,
+                isPrimaryKey,
+                isNotNull,
+                isAutoInc,
+                defaultValue,
+                onUpdateNow,
+                commentValue
+        );
         result.getReferencedTables().addAll(getReferencedTables(ctx));
         return result;
     }

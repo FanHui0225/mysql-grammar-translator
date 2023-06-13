@@ -28,6 +28,8 @@ public final class ColumnDefinitionSegment implements CreateDefinitionSegment {
 
     private final boolean notNull;
 
+    private final boolean autoInc;
+
     private final LiteralValue defaultValue;
 
     private final NowLiteralValue onUpdateNow;
@@ -44,17 +46,29 @@ public final class ColumnDefinitionSegment implements CreateDefinitionSegment {
         this.defaultValue = null;
         this.primaryKey = primaryKey;
         this.notNull = notNull;
+        this.autoInc = false;
         this.onUpdateNow = null;
         this.commentValue = null;
     }
 
-    public ColumnDefinitionSegment(int startIndex, int stopIndex, ColumnSegment columnName, DataTypeSegment dataType, boolean primaryKey, boolean notNull, LiteralValue defaultValue, NowLiteralValue onUpdateNow, StringLiteralValue commentValue) {
+    public ColumnDefinitionSegment(
+            int startIndex,
+            int stopIndex,
+            ColumnSegment columnName,
+            DataTypeSegment dataType,
+            boolean primaryKey,
+            boolean notNull,
+            boolean autoInc,
+            LiteralValue defaultValue,
+            NowLiteralValue onUpdateNow,
+            StringLiteralValue commentValue) {
         this.startIndex = startIndex;
         this.stopIndex = stopIndex;
         this.columnName = columnName;
         this.dataType = dataType;
         this.primaryKey = primaryKey;
         this.notNull = notNull;
+        this.autoInc = autoInc;
         this.defaultValue = defaultValue;
         this.onUpdateNow = onUpdateNow;
         this.commentValue = commentValue;
@@ -82,6 +96,10 @@ public final class ColumnDefinitionSegment implements CreateDefinitionSegment {
 
     public boolean isNotNull() {
         return notNull;
+    }
+
+    public boolean isAutoInc() {
+        return autoInc;
     }
 
     public Collection<SimpleTableSegment> getReferencedTables() {
