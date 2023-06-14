@@ -29,7 +29,7 @@ public abstract class SQLParserExecutor {
         parseTreeCache = ParseTreeCacheBuilder.build(cacheOption, this);
     }
 
-    public SQLStatement parse(final String sql, boolean useCache) {
+    protected final SQLStatement parse(final String sql, boolean useCache) {
         ParseASTNode parseASTNode = useCache ? parseTreeCache.get(sql) : parseASTNode(sql);
         if (parseASTNode.getRootNode() instanceof ErrorNode) {
             throw new SQLParsingException(sql);
@@ -44,7 +44,7 @@ public abstract class SQLParserExecutor {
     }
 
 
-    private <T> void appendSQLComments(final ParseASTNode parseASTNode, final T visitResult) {
+    private final <T> void appendSQLComments(final ParseASTNode parseASTNode, final T visitResult) {
         if (visitResult instanceof AbstractSQLStatement) {
             for (Token each : parseASTNode.getHiddenTokens()) {
                 ((AbstractSQLStatement) visitResult).getCommentSegments().add(new CommentSegment(each.getText(), each.getStartIndex(), each.getStopIndex()));
@@ -52,7 +52,7 @@ public abstract class SQLParserExecutor {
         }
     }
 
-    public abstract ParseASTNode parseASTNode(final String sql);
+    protected abstract ParseASTNode parseASTNode(final String sql);
 
     protected abstract SQLStatementVisitor createParseTreeVisitor(final SQLStatementType type);
 }

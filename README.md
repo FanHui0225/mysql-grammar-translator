@@ -1,6 +1,6 @@
 # Mysql Grammar Translator
 
-#### mysql sql to transform to another sql.
+#### 基于Antlr4 开发的Mysql sql翻译成Dameng sql工具.
 
 
 
