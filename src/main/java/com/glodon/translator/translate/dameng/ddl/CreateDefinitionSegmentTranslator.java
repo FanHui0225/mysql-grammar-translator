@@ -7,6 +7,7 @@ import com.glodon.translator.parser.segment.dml.column.ColumnSegment;
 import com.glodon.translator.parser.segment.generic.DataTypeSegment;
 import com.glodon.translator.translate.SQLSegmentTranslator;
 import com.glodon.translator.translate.SQLTranslatorException;
+import org.apache.groovy.parser.antlr4.util.StringUtils;
 
 public class CreateDefinitionSegmentTranslator extends SQLSegmentTranslator<CreateDefinitionSegment> {
 
@@ -29,7 +30,7 @@ public class CreateDefinitionSegmentTranslator extends SQLSegmentTranslator<Crea
             if (null == columnSegment) {
                 throw new SQLTranslatorException("create column name definition required.");
             }
-            appendIndent().append(columnSegment.getIdentifier().getValue()).appendBlankSpace();
+            appendIndent().append(columnSegment.getIdentifier().getValue().toUpperCase()).appendBlankSpace();
             DataTypeSegment typeSegment = columnDefinitionSegment.getDataType();
             if (null == typeSegment) {
                 throw new SQLTranslatorException("create column type definition required.");

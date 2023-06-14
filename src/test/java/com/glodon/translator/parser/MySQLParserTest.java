@@ -48,10 +48,14 @@ public class MySQLParserTest {
             SQLStatement statement5 = facade.parse("SELECT * FROM emp WHERE e_sai > (SELECT MAX(e_sai) FROM emp WHERE department=10)\n" +
                     "AND department != 10;", false);
 
+            String sql6;
+            SQLStatement statement6 = facade.parse(sql6 = "CREATE DATABASE IF NOT EXISTS test_db_char DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_chinese_ci;", false);
+
             //萃取table
             extractor.extractTablesFromSelect((SelectStatement) statement2);
             start = System.currentTimeMillis();
             System.out.println(facade.translate(sql3));
+            System.out.println(facade.translate(sql6));
             System.out.println("Dameng转换开销: " + (System.currentTimeMillis() - start) + "ms");
         }
     }
