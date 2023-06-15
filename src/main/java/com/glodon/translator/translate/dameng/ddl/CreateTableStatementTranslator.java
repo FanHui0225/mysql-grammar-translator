@@ -43,7 +43,6 @@ public class CreateTableStatementTranslator extends SQLStatementTranslator<MySQL
             CreateDefinitionSegmentTranslator createDefinitionSegmentTranslator = new CreateDefinitionSegmentTranslator(it.hasNext());
             append(createDefinitionSegmentTranslator.translate(definitionSegment)).appendLineFeed();
             hasAutoInc |= createDefinitionSegmentTranslator.isAutoInc();
-
         }
         append(")");
         String additionalParameters = DamengConfigurationProperties.INSTANCE().getValue(CREATE_TABLE_ADDITIONAL_PARAMETERS);
