@@ -2,7 +2,6 @@ package com.glodon.translator;
 
 import com.glodon.translator.parser.ParseASTNode;
 import com.glodon.translator.parser.SQLParser;
-import com.glodon.translator.parser.SQLParserExecutor;
 import com.glodon.translator.parser.SQLParsingException;
 import com.glodon.translator.parser.dialect.mysql.MySQLParser;
 import com.glodon.translator.parser.dialect.mysql.MySQLParserErrorListener;

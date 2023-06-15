@@ -7,9 +7,13 @@ import com.glodon.translator.parser.segment.generic.table.SimpleTableSegment;
 import com.glodon.translator.parser.value.identifier.IdentifierValue;
 import com.glodon.translator.translate.SQLStatementTranslator;
 import com.glodon.translator.translate.SQLTranslatorException;
+import com.glodon.translator.translate.dameng.DamengConfigurationProperties;
+import org.apache.groovy.parser.antlr4.util.StringUtils;
 
 import java.util.Collection;
 import java.util.Iterator;
+
+import static com.glodon.translator.translate.props.ConfigurationPropertyKey.CREATE_TABLE_ADDITIONAL_PARAMETERS;
 
 public class CreateTableStatementTranslator extends SQLStatementTranslator<MySQLCreateTableStatement> {
 
@@ -42,6 +46,10 @@ public class CreateTableStatementTranslator extends SQLStatementTranslator<MySQL
 
         }
         append(")");
+        String additionalParameters = DamengConfigurationProperties.INSTANCE().getValue(CREATE_TABLE_ADDITIONAL_PARAMETERS);
+        if (!StringUtils.isEmpty(additionalParameters)) {
+            appendLineFeed().append(additionalParameters);
+        }
         if (hasAutoInc) {
             appendLineFeed().append("AUTO_INCREMENT").append('=').append('0');
         }

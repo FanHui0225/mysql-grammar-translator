@@ -1,8 +1,10 @@
 package com.glodon.translator.translate.props;
 
-public interface PropertyKey {
+public interface TypedPropertyKey {
 
     String getKey();
 
     String getDefaultValue();
+
+    Class<?> getType();
 }
