@@ -16,7 +16,7 @@ public class InsertColumnsSegmentTranslator extends SQLSegmentTranslator<InsertC
         append('(');
         while (it.hasNext()) {
             ColumnSegment columnSegment = it.next();
-            append(columnSegment.getIdentifier().getValue());
+            append(columnSegment.getIdentifier().getValue().toUpperCase());
             if (it.hasNext()) {
                 String sep = ", ";
                 append(sep);
