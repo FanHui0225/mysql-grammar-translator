@@ -11,6 +11,7 @@ import com.glodon.translator.parser.statement.SQLStatement;
 import com.glodon.translator.parser.statement.SQLStatementType;
 import com.glodon.translator.parser.visitor.statement.SQLStatementVisitor;
 import com.glodon.translator.translate.SQLStatementTranslator;
+import com.glodon.translator.translate.SQLStatementTranslatorFactory;
 import com.glodon.translator.translate.SQLTranslateExecutor;
 import com.glodon.translator.translate.dameng.DamengStatementTranslatorFactory;
 import org.antlr.v4.runtime.CodePointBuffer;
@@ -24,7 +25,7 @@ import java.nio.CharBuffer;
 
 public class MySQLToDamengSQLFacade extends SQLTranslateExecutor {
 
-    private final DamengStatementTranslatorFactory factory = new DamengStatementTranslatorFactory();
+    private final SQLStatementTranslatorFactory factory = new DamengStatementTranslatorFactory();
 
     @Override
     protected ParseASTNode parseASTNode(final String sql) {

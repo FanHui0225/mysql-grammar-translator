@@ -8,6 +8,11 @@ public abstract class SQLTranslator<E extends ASTNode> {
 
     public abstract String translate(E statement);
 
+    public SQLTranslator<E> append(final StringBuilder value) {
+        SQL.append(value);
+        return this;
+    }
+
     public SQLTranslator<E> append(final char value) {
         SQL.append(value);
         return this;

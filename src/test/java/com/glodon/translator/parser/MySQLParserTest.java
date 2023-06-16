@@ -11,7 +11,7 @@ public class MySQLParserTest {
         TableExtractor extractor = new TableExtractor();
         MySQLToDamengSQLFacade facade = new MySQLToDamengSQLFacade();
         for (int i = 0; i < 1; i++) {
-            long start = System.currentTimeMillis();
+
 //            SQLStatement statement1 = facade.parse("CREATE TABLE TEST (\n" +
 //                    "id int(11) NOT NULL,\n" +
 //                    "name varchar(20) DEFAULT 'Beijing',\n" +
@@ -56,11 +56,23 @@ public class MySQLParserTest {
 
             SQLStatement statement8 = facade.parse("INSERT INTO qwer (a,b,c) VALUES (1,2,3) ON DUPLICATE KEY UPDATE c=c+1;", false);
 
+            String sql9;
+            SQLStatement statement9 = facade.parse(sql9 = "insert into abc.students set sid=3,sname='bbb',gender='feman',dept_id=1;", false);
+
+            String sql10;
+            SQLStatement statement10 = facade.parse(sql10 = "INSERT INTO abc.tasks(title, priority)\n" +
+                    "VALUES\n" +
+                    " ('My first task', 1),\n" +
+                    " ('It is the second task',2),\n" +
+                    " ('This is the third task of the week',3);", false);
+
             //萃取table
-//            extractor.extractTablesFromSelect((SelectStatement) statement2);
-//            start = System.currentTimeMillis();
-//            System.out.println(facade.translate(sql3));
-//            System.out.println(facade.translate(sql6));
+            //extractor.extractTablesFromSelect((SelectStatement) statement2);
+            long start = System.currentTimeMillis();
+            //System.out.println(facade.translate(sql3));
+            //System.out.println(facade.translate(sql6));
+            System.out.println(facade.translate(sql9));
+            System.out.println(facade.translate(sql10));
             System.out.println("Dameng转换开销: " + (System.currentTimeMillis() - start) + "ms");
         }
     }
