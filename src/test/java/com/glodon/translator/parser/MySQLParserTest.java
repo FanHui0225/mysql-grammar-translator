@@ -66,6 +66,11 @@ public class MySQLParserTest {
                     " ('It is the second task',2),\n" +
                     " ('This is the third task of the week',3);", false);
 
+            SQLStatement statement11 = facade.parse("SELECT\n count(1) as c," +
+                    "    lastname, firstname, jobtitle\n" +
+                    "FROM\n" +
+                    "    employees; ", false);
+
             //萃取table
             //extractor.extractTablesFromSelect((SelectStatement) statement2);
             long start = System.currentTimeMillis();

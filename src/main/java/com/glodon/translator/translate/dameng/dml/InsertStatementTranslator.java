@@ -10,6 +10,7 @@ import com.glodon.translator.parser.segment.dml.column.OnDuplicateKeyColumnsSegm
 import com.glodon.translator.parser.segment.dml.expr.ExpressionSegment;
 import com.glodon.translator.parser.segment.dml.expr.complex.CommonExpressionSegment;
 import com.glodon.translator.parser.segment.dml.expr.simple.LiteralExpressionSegment;
+import com.glodon.translator.parser.segment.dml.expr.subquery.SubquerySegment;
 import com.glodon.translator.parser.segment.generic.table.SimpleTableSegment;
 import com.glodon.translator.parser.value.identifier.IdentifierValue;
 import com.glodon.translator.translate.SQLStatementTranslator;
@@ -37,10 +38,14 @@ public class InsertStatementTranslator extends SQLStatementTranslator<MySQLInser
         }
         append(tableName.getValue().toUpperCase()).appendBlankSpace();
         Optional<SetAssignmentSegment> setAssignmentSegmentOptional = statement.getSetAssignment();
-        Collection<InsertValuesSegment> valuesSegments = statement.getValues();
+        Optional<SubquerySegment> subquerySegmentOptional = statement.getInsertSelect();
         if (setAssignmentSegmentOptional.isPresent()) {
             append(new SetAssignmentSegmentTranslator().translate(setAssignmentSegmentOptional.get()));
+        } else if (subquerySegmentOptional.isPresent()) {
+            SubquerySegment subquerySegment = subquerySegmentOptional.get();
+            //TODO translate subquerySegment
         } else {
+            Collection<InsertValuesSegment> valuesSegments = statement.getValues();
             Optional<InsertColumnsSegment> insertColumnsSegmentOptional = statement.getInsertColumns();
             if (insertColumnsSegmentOptional.isPresent()) {
                 append(new InsertColumnsSegmentTranslator().translate(insertColumnsSegmentOptional.get())).appendBlankSpace();
